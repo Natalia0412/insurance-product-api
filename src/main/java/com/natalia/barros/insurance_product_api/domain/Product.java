@@ -4,6 +4,7 @@ import com.natalia.barros.insurance_product_api.domain.Category;
 import com.natalia.barros.insurance_product_api.strategy.TaxStrategy;
 import jakarta.persistence.*;
 import lombok.*;
+import java.math.RoundingMode;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -14,8 +15,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "product")
 public class Product {
     @Id
+    @GeneratedValue
     private UUID id;
 
     private String  nome;
@@ -30,6 +33,10 @@ public class Product {
     private BigDecimal precoTarifado;
 
     public void calculateTariffPrice(TaxStrategy strategy){
-        this.precoTarifado = strategy.calculate(this.precoBase);
+
+        this.precoTarifado = strategy.calculate(this.precoBase)
+                .setScale(2, RoundingMode.HALF_UP);
     }
+
+
 }

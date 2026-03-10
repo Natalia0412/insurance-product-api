@@ -1,4 +1,4 @@
-CREATE TABLE insurance_product (
+CREATE TABLE product (
     id UUID PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
     categoria VARCHAR(50) NOT NULL,

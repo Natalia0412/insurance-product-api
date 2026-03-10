@@ -11,5 +11,7 @@ public interface ProductMapper {
 
     ProductResponse toResponse(Product product);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "precoTarifado", ignore = true)
     Product toEntity(ProductRequest request);
 }

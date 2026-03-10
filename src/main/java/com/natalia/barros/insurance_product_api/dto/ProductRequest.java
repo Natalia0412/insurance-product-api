@@ -1,5 +1,6 @@
 package com.natalia.barros.insurance_product_api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.natalia.barros.insurance_product_api.domain.Category;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -19,6 +20,7 @@ public record ProductRequest(
 
         @NotNull(message = "Preço base é obrigatório")
         @DecimalMin(value = "0.01", message = "Preço deve ser maior que zero")
+        @JsonProperty("preco_base")
         BigDecimal precoBase
 
 ) {}
