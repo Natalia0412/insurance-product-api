@@ -1,9 +1,8 @@
 package com.natalia.barros.insurance_product_api.domain;
 
+import com.natalia.barros.insurance_product_api.domain.Category;
 import com.natalia.barros.insurance_product_api.strategy.TaxStrategy;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -21,7 +20,8 @@ public class Product {
 
     private String  nome;
 
-    private String categoria;
+    @Enumerated(EnumType.STRING)
+    private Category categoria;
 
     @Column(name = "preco_base")
     private BigDecimal precoBase;

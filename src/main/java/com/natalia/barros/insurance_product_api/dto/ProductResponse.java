@@ -13,6 +13,4 @@ public record ProductResponse (
         Category categoria,
         BigDecimal precoBase,
         BigDecimal precoTarifado
-){
-
-}
+){}

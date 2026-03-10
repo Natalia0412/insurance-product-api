@@ -15,7 +15,7 @@ public record ProductRequest(
         String nome,
 
         @NotNull(message = "Categoria é obrigatória")
-        Category category,
+        Category categoria,
 
         @NotNull(message = "Preço base é obrigatório")
         @DecimalMin(value = "0.01", message = "Preço deve ser maior que zero")
