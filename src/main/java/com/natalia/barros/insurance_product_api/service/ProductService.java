@@ -1,6 +1,7 @@
 package com.natalia.barros.insurance_product_api.service;
 
 import com.natalia.barros.insurance_product_api.domain.Product;
+import com.natalia.barros.insurance_product_api.dto.ProductRequest;
 import com.natalia.barros.insurance_product_api.factory.TaxStrategyFactory;
 import com.natalia.barros.insurance_product_api.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,10 @@ public class ProductService {
         this.strategyFactory = strategyFactory;
     }
 
-    public Product create(){
-        return null;
+    public Product create(ProductRequest request){
+        Product product = Product.builder()
+                .nome(request)
+
+
     }
 }
