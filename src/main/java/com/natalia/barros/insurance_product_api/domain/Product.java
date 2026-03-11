@@ -17,6 +17,7 @@ import java.util.UUID;
 @Builder
 @Table(name = "product")
 public class Product {
+
     @Id
     @GeneratedValue
     private UUID id;
@@ -34,8 +35,7 @@ public class Product {
 
     public void calculateTariffPrice(TaxStrategy strategy){
 
-        this.precoTarifado = strategy.calculate(this.precoBase)
-                .setScale(2, RoundingMode.HALF_UP);
+        this.precoTarifado = strategy.calculate(this.precoBase);
     }
 
 

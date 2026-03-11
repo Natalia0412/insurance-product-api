@@ -15,7 +15,10 @@ public class ProductService {
     private final TaxStrategyFactory strategyFactory;
     private final ProductMapper productMapper;
 
-    ProductService(ProductRepository productRepository, TaxStrategyFactory strategyFactory, ProductMapper productMapper){
+    ProductService(ProductRepository productRepository,
+                   TaxStrategyFactory strategyFactory,
+                   ProductMapper productMapper)
+    {
         this.productRepository = productRepository;
         this.strategyFactory = strategyFactory;
         this.productMapper = productMapper;
@@ -24,8 +27,11 @@ public class ProductService {
     public ProductResponse create(ProductRequest request){
 
         Product product = productMapper.toEntity(request);
+
         TaxStrategy strategy = strategyFactory.getStrategy(product.getCategoria());
+
         product.calculateTariffPrice(strategy);
+
         Product saved = productRepository.save(product);
 
         return productMapper.toResponse(saved);
