@@ -11,15 +11,15 @@ import java.math.BigDecimal;
 
 public record ProductRequest(
 
-        @NotBlank(message = "Nome é obrigatório")
-        @Size(max = 150)
+        @NotBlank(message = "{product.nome.notblank}")
+        @Size(max = 150, message = "{product.nome.size}")
         String nome,
 
-        @NotNull(message = "Categoria é obrigatória")
+        @NotNull(message = "{product.categoria.notnull}")
         Category categoria,
 
-        @NotNull(message = "Preço base é obrigatório")
-        @DecimalMin(value = "0.01", message = "Preço deve ser maior que zero")
+        @NotNull(message = "{product.preco.notnull}")
+        @DecimalMin(value = "0.01", message = "{product.preco.min}")
         @JsonProperty("preco_base")
         BigDecimal precoBase
 
