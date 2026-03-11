@@ -34,6 +34,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ValidationErrorResponse> handleValidation(
             MethodArgumentNotValidException ex) {
 
+        log.warn("Validation error occurred: {}", ex.getMessage());
+
        String validationError =  getMessage("error.validation");
 
         List<FieldValidationError> errors = ex.getBindingResult()
@@ -60,7 +62,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleIllegalArgument(
             IllegalArgumentException ex) {
 
-        log.error("error.business captured", ex);
+        log.warn("Business rule violated: {}", ex.getMessage());
 
         ApiErrorResponse response = new ApiErrorResponse(
                 LocalDateTime.now(),
@@ -92,6 +94,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleInvalidEnum(HttpMessageNotReadableException ex) {
 
         if (ex.getCause() instanceof InvalidFormatException) {
+            log.warn("Invalid enum error occurred: {}", ex.getMessage());
             return ResponseEntity.badRequest().body(
                     new ApiErrorResponse(
                             LocalDateTime.now(),
@@ -101,6 +104,8 @@ public class GlobalExceptionHandler {
                     )
             );
         }
+
+        log.warn("Invalid JSON error occurred: {}", ex.getMessage());
 
         return ResponseEntity.badRequest().body(
                 new ApiErrorResponse(
