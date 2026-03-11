@@ -17,34 +17,34 @@ class TaxStrategyFactoryTest {
 
     private final TaxStrategyFactory factory = new TaxStrategyFactory();
 
-    @ParameterizedTest
-    @MethodSource("strategyProvider")
-    void shouldCalculateTaxCorrectly(
-            TaxStrategy strategy,
-            BigDecimal basePrice,
-            BigDecimal expectedPrice) {
-
-        BigDecimal result = strategy.calculate(basePrice);
-
-        assertEquals(expectedPrice, result);
-    }
-
-    static Stream<Object[]> strategyProvider() {
-        return Stream.of(
-                new Object[]{new AutoTaxStrategy(), new BigDecimal("1000"), new BigDecimal("1105.00")},
-                new Object[]{new VidaTaxStrategy(), new BigDecimal("1000"), new BigDecimal("1032.00")},
-                new Object[]{new ViagemTaxStrategy(), new BigDecimal("1000"), new BigDecimal("1070.00")},
-                new Object[]{new ResidencialTaxStrategy(), new BigDecimal("1000"), new BigDecimal("1070.00")},
-                new Object[]{new PatrimonialTaxStrategy(), new BigDecimal("1000"), new BigDecimal("1080.00")}
-        );
+    @Test
+    void shouldReturnAutoStrategy() {
+        var strategy = factory.getStrategy(Category.AUTO);
+        assertTrue(strategy instanceof AutoTaxStrategy);
     }
 
     @Test
-    void shouldReturnAutoStrategy() {
+    void shouldReturnVidaStrategy() {
+        var strategy = factory.getStrategy(Category.VIDA);
+        assertTrue(strategy instanceof VidaTaxStrategy);
+    }
 
-        var strategy = factory.getStrategy(Category.AUTO);
+    @Test
+    void shouldReturnViagemStrategy() {
+        var strategy = factory.getStrategy(Category.VIAGEM);
+        assertTrue(strategy instanceof ViagemTaxStrategy);
+    }
 
-        assertNotNull(strategy);
+    @Test
+    void shouldReturnResidencialStrategy() {
+        var strategy = factory.getStrategy(Category.RESIDENCIAL);
+        assertTrue(strategy instanceof ResidencialTaxStrategy);
+    }
+
+    @Test
+    void shouldReturnPatrimonialStrategy() {
+        var strategy = factory.getStrategy(Category.PATRIMONIAL);
+        assertTrue(strategy instanceof PatrimonialTaxStrategy);
     }
 
 

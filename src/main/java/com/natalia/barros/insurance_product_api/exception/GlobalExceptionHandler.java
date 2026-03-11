@@ -60,6 +60,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleIllegalArgument(
             IllegalArgumentException ex) {
 
+        log.error("error.business captured", ex);
 
         ApiErrorResponse response = new ApiErrorResponse(
                 LocalDateTime.now(),
@@ -74,7 +75,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGenericException(Exception ex) {
 
-        log.error("Unexpected error", ex);
+        log.error("error.unexpected captured", ex);
 
         ApiErrorResponse response = new ApiErrorResponse(
                 LocalDateTime.now(),
@@ -106,7 +107,7 @@ public class GlobalExceptionHandler {
                         LocalDateTime.now(),
                         HttpStatus.BAD_REQUEST.value(),
                         getMessage("error.validation"),
-                        "JSON inválido"
+                        getMessage("error.json.invalid")
                 )
         );
     }

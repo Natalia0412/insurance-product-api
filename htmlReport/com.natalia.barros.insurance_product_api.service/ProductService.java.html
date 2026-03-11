@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProductService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.natalia.barros.insurance_product_api.service</a> &gt; <span class="el_source">ProductService.java</span></div><h1>ProductService.java</h1><pre class="source lang-java linenums">package com.natalia.barros.insurance_product_api.service;
+
+import com.natalia.barros.insurance_product_api.domain.Product;
+import com.natalia.barros.insurance_product_api.dto.ProductRequest;
+import com.natalia.barros.insurance_product_api.dto.ProductResponse;
+import com.natalia.barros.insurance_product_api.factory.TaxStrategyFactory;
+import com.natalia.barros.insurance_product_api.repository.ProductRepository;
+import com.natalia.barros.insurance_product_api.mapper.ProductMapper;
+import com.natalia.barros.insurance_product_api.strategy.TaxStrategy;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ProductService {
+    private final ProductRepository productRepository;
+    private final TaxStrategyFactory strategyFactory;
+    private final ProductMapper productMapper;
+
+    ProductService(ProductRepository productRepository,
+                   TaxStrategyFactory strategyFactory,
+                   ProductMapper productMapper)
+<span class="fc" id="L21">    {</span>
+<span class="fc" id="L22">        this.productRepository = productRepository;</span>
+<span class="fc" id="L23">        this.strategyFactory = strategyFactory;</span>
+<span class="fc" id="L24">        this.productMapper = productMapper;</span>
+<span class="fc" id="L25">    }</span>
+
+    public ProductResponse create(ProductRequest request){
+
+<span class="fc" id="L29">        Product product = productMapper.toEntity(request);</span>
+
+<span class="fc" id="L31">        TaxStrategy strategy = strategyFactory.getStrategy(product.getCategoria());</span>
+
+<span class="fc" id="L33">        product.calculateTariffPrice(strategy);</span>
+
+<span class="fc" id="L35">        Product saved = productRepository.save(product);</span>
+
+<span class="fc" id="L37">        return productMapper.toResponse(saved);</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

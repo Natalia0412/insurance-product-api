@@ -49,12 +49,12 @@ public class ProductIntegrationTest {
     void shouldReturnValidationErrorWhenNameIsBlank() throws Exception {
 
         String json = """
-            {
-              "nome": "",
-              "categoria": "AUTO",
-              "preco_base": 100
-            }
-        """;
+                    {
+                      "nome": "",
+                      "categoria": "AUTO",
+                      "preco_base": 100
+                    }
+                """;
 
         mockMvc.perform(post("/products")
                         .contentType("application/json")
@@ -67,12 +67,12 @@ public class ProductIntegrationTest {
     void shouldReturnErrorWhenCategoryIsInvalid() throws Exception {
 
         String json = """
-        {
-          "nome": "Seguro",
-          "categoria": "INVALID",
-          "preco_base": 100
-        }
-        """;
+                {
+                  "nome": "Seguro",
+                  "categoria": "INVALID",
+                  "preco_base": 100
+                }
+                """;
 
         mockMvc.perform(post("/products")
                         .contentType("application/json")
@@ -80,4 +80,42 @@ public class ProductIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Validation Error"));
     }
+
+    @Test
+    void shouldReturnBusinessError() throws Exception {
+
+        String json = """
+                {
+                  "nome": "Seguro",
+                  "categoria": "AUTO",
+                  "preco_base": -10
+                }
+                """;
+
+        mockMvc.perform(post("/products")
+                        .contentType("application/json")
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Validation Error"));
+    }
+
+    @Test
+    void shouldReturnJsonInvalidWhenMalformedJson() throws Exception {
+
+        String invalidJson = """
+                {
+                  "nome": "Seguro Auto",
+                  "categoria": "AUTO",
+                  "preco_base": 100,
+                }
+                """;
+
+        mockMvc.perform(post("/products")
+                        .contentType("application/json")
+                        .content(invalidJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Validation Error"))
+                .andExpect(jsonPath("$.message").value("JSON inválido"));
+    }
+
 }

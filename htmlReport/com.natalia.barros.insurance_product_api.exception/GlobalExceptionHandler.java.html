@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.natalia.barros.insurance_product_api.exception</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.natalia.barros.insurance_product_api.exception;
+
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.natalia.barros.insurance_product_api.dto.FieldValidationError;
+import com.natalia.barros.insurance_product_api.dto.ApiErrorResponse;
+import com.natalia.barros.insurance_product_api.dto.ValidationErrorResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.context.MessageSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Locale;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+<span class="fc" id="L24">    private static final Logger log =</span>
+<span class="fc" id="L25">            LoggerFactory.getLogger(GlobalExceptionHandler.class);</span>
+
+    private final MessageSource messageSource;
+
+<span class="fc" id="L29">    public GlobalExceptionHandler(MessageSource messageSource) {</span>
+<span class="fc" id="L30">        this.messageSource = messageSource;</span>
+<span class="fc" id="L31">    }</span>
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;ValidationErrorResponse&gt; handleValidation(
+            MethodArgumentNotValidException ex) {
+
+<span class="fc" id="L37">       String validationError =  getMessage(&quot;error.validation&quot;);</span>
+
+<span class="fc" id="L39">        List&lt;FieldValidationError&gt; errors = ex.getBindingResult()</span>
+<span class="fc" id="L40">                .getFieldErrors()</span>
+<span class="fc" id="L41">                .stream()</span>
+<span class="fc" id="L42">                .map(fieldError -&gt;</span>
+<span class="fc" id="L43">                        new FieldValidationError(</span>
+<span class="fc" id="L44">                                fieldError.getField(),</span>
+<span class="fc" id="L45">                                fieldError.getDefaultMessage()))</span>
+<span class="fc" id="L46">                .toList();</span>
+
+
+<span class="fc" id="L49">        ValidationErrorResponse response = new ValidationErrorResponse(</span>
+<span class="fc" id="L50">                LocalDateTime.now(),</span>
+<span class="fc" id="L51">                HttpStatus.BAD_REQUEST.value(),</span>
+                validationError,
+                errors
+        );
+
+<span class="fc" id="L56">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);</span>
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity&lt;ApiErrorResponse&gt; handleIllegalArgument(
+            IllegalArgumentException ex) {
+
+<span class="fc" id="L63">        log.error(&quot;error.business captured&quot;, ex);</span>
+
+<span class="fc" id="L65">        ApiErrorResponse response = new ApiErrorResponse(</span>
+<span class="fc" id="L66">                LocalDateTime.now(),</span>
+<span class="fc" id="L67">                HttpStatus.BAD_REQUEST.value(),</span>
+<span class="fc" id="L68">                getMessage(&quot;error.business&quot;),</span>
+<span class="fc" id="L69">                ex.getMessage()</span>
+        );
+
+<span class="fc" id="L72">        return ResponseEntity.badRequest().body(response);</span>
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;ApiErrorResponse&gt; handleGenericException(Exception ex) {
+
+<span class="fc" id="L78">        log.error(&quot;error.unexpected captured&quot;, ex);</span>
+
+<span class="fc" id="L80">        ApiErrorResponse response = new ApiErrorResponse(</span>
+<span class="fc" id="L81">                LocalDateTime.now(),</span>
+<span class="fc" id="L82">                HttpStatus.INTERNAL_SERVER_ERROR.value(),</span>
+<span class="fc" id="L83">                getMessage(&quot;error.internal&quot;),</span>
+<span class="fc" id="L84">                getMessage(&quot;error.unexpected&quot;)</span>
+        );
+
+<span class="fc" id="L87">        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="fc" id="L88">                .body(response);</span>
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity&lt;ApiErrorResponse&gt; handleInvalidEnum(HttpMessageNotReadableException ex) {
+
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if (ex.getCause() instanceof InvalidFormatException) {</span>
+<span class="fc" id="L95">            return ResponseEntity.badRequest().body(</span>
+                    new ApiErrorResponse(
+<span class="fc" id="L97">                            LocalDateTime.now(),</span>
+<span class="fc" id="L98">                            HttpStatus.BAD_REQUEST.value(),</span>
+<span class="fc" id="L99">                            getMessage(&quot;error.validation&quot;),</span>
+<span class="fc" id="L100">                            getMessage(&quot;error.invalid.category&quot;)</span>
+                    )
+            );
+        }
+
+<span class="fc" id="L105">        return ResponseEntity.badRequest().body(</span>
+                new ApiErrorResponse(
+<span class="fc" id="L107">                        LocalDateTime.now(),</span>
+<span class="fc" id="L108">                        HttpStatus.BAD_REQUEST.value(),</span>
+<span class="fc" id="L109">                        getMessage(&quot;error.validation&quot;),</span>
+<span class="fc" id="L110">                        getMessage(&quot;error.json.invalid&quot;)</span>
+                )
+        );
+    }
+
+    public String  getMessage (String key ){
+<span class="fc" id="L116">        return  messageSource.getMessage(</span>
+                key,
+                null,
+<span class="fc" id="L119">                Locale.getDefault()</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

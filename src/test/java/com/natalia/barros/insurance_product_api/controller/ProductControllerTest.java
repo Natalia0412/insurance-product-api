@@ -1,6 +1,7 @@
 package com.natalia.barros.insurance_product_api.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.natalia.barros.insurance_product_api.domain.Category;
 import com.natalia.barros.insurance_product_api.dto.ProductRequest;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
     @Autowired
@@ -75,11 +77,11 @@ class ProductControllerTest {
     void shouldReturnValidationMessageWhenCategoryIsNull() throws Exception {
 
         String json = """
-        {
-          "nome": "Seguro Auto",
-          "preco_base": 100
-        }
-        """;
+                {
+                  "nome": "Seguro Auto",
+                  "preco_base": 100
+                }
+                """;
 
         mockMvc.perform(post("/products")
                         .contentType("application/json")
@@ -93,11 +95,11 @@ class ProductControllerTest {
     void shouldReturnValidationMessageWhenPriceIsNull() throws Exception {
 
         String json = """
-        {
-          "nome": "Seguro Auto",
-          "categoria": "AUTO"
-        }
-        """;
+                {
+                  "nome": "Seguro Auto",
+                  "categoria": "AUTO"
+                }
+                """;
 
         mockMvc.perform(post("/products")
                         .contentType("application/json")
@@ -128,13 +130,13 @@ class ProductControllerTest {
     void shouldIgnorePrecoTarifadoFromRequest() throws Exception {
 
         String json = """
-        {
-          "nome": "Seguro Auto",
-          "categoria": "AUTO",
-          "preco_base": 100,
-          "preco_tarifado": 9999
-        }
-        """;
+                {
+                  "nome": "Seguro Auto",
+                  "categoria": "AUTO",
+                  "preco_base": 100,
+                  "preco_tarifado": 9999
+                }
+                """;
 
         ProductResponse response = ProductResponse.builder()
                 .id(UUID.randomUUID())
@@ -158,13 +160,13 @@ class ProductControllerTest {
     void shouldIgnoreUnknownFieldsInRequest() throws Exception {
 
         String json = """
-        {
-          "nome": "Seguro Auto",
-          "categoria": "AUTO",
-          "preco_base": 100,
-          "hack": "malicious field"
-        }
-        """;
+                {
+                  "nome": "Seguro Auto",
+                  "categoria": "AUTO",
+                  "preco_base": 100,
+                  "hack": "malicious field"
+                }
+                """;
 
         mockMvc.perform(post("/products")
                         .contentType("application/json")
@@ -178,5 +180,49 @@ class ProductControllerTest {
         ));
     }
 
+    @Test
+    void shouldReturnBusinessErrorWhenServiceThrowsIllegalArgument() throws Exception {
+
+        String json = """
+                {
+                  "nome": "Seguro Auto",
+                  "categoria": "AUTO",
+                  "preco_base": 100
+                }
+                """;
+
+        Mockito.when(productService.create(Mockito.any()))
+                .thenThrow(new IllegalArgumentException("Regra de negócio violada"));
+
+        mockMvc.perform(post("/products")
+                        .contentType("application/json")
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Business Error"))
+                .andExpect(jsonPath("$.message").value("Regra de negócio violada"));
+    }
+
+    @Test
+    void shouldReturnInternalServerErrorWhenUnexpectedExceptionOccurs() throws Exception {
+
+        String json = """
+                {
+                  "nome": "Seguro Auto",
+                  "categoria": "AUTO",
+                  "preco_base": 100
+                }
+                """;
+
+        Mockito.when(productService.create(Mockito.any()))
+                .thenThrow(new RuntimeException("Unexpected failure"));
+
+        mockMvc.perform(post("/products")
+                        .contentType("application/json")
+                        .content(json))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error").value("Internal Server Error"))
+                .andExpect(jsonPath("$.message")
+                        .value("Ocorreu um erro inesperado na aplicação"));
+    }
 }
 
