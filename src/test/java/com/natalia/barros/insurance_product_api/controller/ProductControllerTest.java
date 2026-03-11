@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -151,5 +153,30 @@ class ProductControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.preco_tarifado").value(110.50));
     }
+
+    @Test
+    void shouldIgnoreUnknownFieldsInRequest() throws Exception {
+
+        String json = """
+        {
+          "nome": "Seguro Auto",
+          "categoria": "AUTO",
+          "preco_base": 100,
+          "hack": "malicious field"
+        }
+        """;
+
+        mockMvc.perform(post("/products")
+                        .contentType("application/json")
+                        .content(json))
+                .andExpect(status().isCreated());
+
+        verify(productService).create(argThat(request ->
+                request.nome().equals("Seguro Auto") &&
+                        request.categoria() == Category.AUTO &&
+                        request.precoBase().compareTo(new BigDecimal("100")) == 0
+        ));
+    }
+
 }
 
