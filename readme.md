@@ -4,7 +4,9 @@ API REST para criação de produtos de seguro com cálculo automático de preço
 
 A aplicação foi desenvolvida utilizando Java + Spring Boot, seguindo boas práticas de arquitetura, validação de dados, 
 testes automatizados e observabilidade.
+
 ----
+
 ## Arquitetura da Aplicação
 
 A aplicação segue uma arquitetura em camadas:
@@ -333,6 +335,29 @@ docker-compose up -d
 ````
 mvn spring-boot:run
 ````
+#### Executar o teste 
+````
+mvn test
+````
+
+#### Banco de Dados aplicação
+
+A aplicação utiliza PostgreSQL.
+
+Credenciais padrão para ambiente local:
+
+Host: localhost  
+Porta: 5432  
+Database: insurance  
+User: postgres  
+Password: postgres
+
+#### Banco de Dados teste
+Teste utiliza banco H2:
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=teste
 
 ---
 
@@ -342,6 +367,7 @@ Para gerar o relatório de cobertura de testes:
 ````
 mvn clean verify
 ````
+
 O relatório será gerado em:
 
 target/site/jacoco/index.html
