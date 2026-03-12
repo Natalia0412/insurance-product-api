@@ -125,6 +125,23 @@ Apenas uma estratégia deve ser aplicada por vez.
 
 Dessa forma, o uso do Strategy Pattern se mostrou mais simples e adequado para resolver o problema.
 
+### Uso de Factory em vez de Injeção Automática de Beans
+Embora o Spring Framework ofereça mecanismos poderosos de injeção de dependências que permitem resolver automaticamente implementações de uma interface.
+
+Neste projeto optei por implementar explicitamente uma Factory (TaxStrategyFactory) para a seleção das estratégias de cálculo.
+
+Essa decisão foi tomada por alguns motivos arquiteturais e didáticos.
+
+Em resumo, a escolha por uma TaxStrategyFactory manual foi motivada por:
+
+- Tornar explícita a aplicação dos padrões Strategy e Factory
+
+- Manter a responsabilidade de seleção das estratégias centralizada
+
+- Evitar acoplamento direto da lógica de negócio ao container do Spring
+
+- Facilitar a compreensão arquitetural do projeto
+
 ---
 ### Tecnologias Utilizadas
 
