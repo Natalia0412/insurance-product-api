@@ -164,7 +164,7 @@ O versionamento do banco é gerenciado pelo Flyway, garantindo controle de migra
 ---
 
 ### Endpoint da API
-
+Endpoints disponíveis em **doc/postman/insurence_product_api.postman_collection.json**:
 ##### Criar Produto
 
 POST
@@ -194,6 +194,8 @@ POST
 }
 ````
 O campo preco_tarifado é calculado automaticamente pela aplicação.
+
+
 
 ---
 
@@ -242,13 +244,14 @@ Tipos de erro tratados:
 
 A aplicação possui recursos de observabilidade utilizando Spring Boot Actuator.
 
-Endpoints disponíveis:
+Endpoints disponíveis em **doc/postman/metrics.postman_collection.json**:
 
 ````
 /actuator/health
 /actuator/metrics
 /actuator/metrics/http.server.requests
 ````
+
 ---
 
 ### Logging e Rastreamento de Requisições
