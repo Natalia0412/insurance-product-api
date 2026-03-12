@@ -163,6 +163,25 @@ O banco de dados utilizado é PostgreSQL executado em container Docker.
 
 O versionamento do banco é gerenciado pelo Flyway, garantindo controle de migrações.
 
+#### Credenciais padrão para ambiente local:
+
+Host: localhost  
+Porta: 5432  
+Database: insurance  
+User: postgres  
+Password: postgres
+
+#### Banco de Dados teste
+Teste utiliza banco H2:
+
+spring.datasource.url=jdbc:h2:mem:testdb
+
+spring.datasource.driverClassName=org.h2.Driver
+
+spring.datasource.username=sa
+
+spring.datasource.password=teste
+
 ---
 
 ### Endpoint da API
@@ -339,25 +358,6 @@ mvn spring-boot:run
 ````
 mvn test
 ````
-
-#### Banco de Dados aplicação
-
-A aplicação utiliza PostgreSQL.
-
-Credenciais padrão para ambiente local:
-
-Host: localhost  
-Porta: 5432  
-Database: insurance  
-User: postgres  
-Password: postgres
-
-#### Banco de Dados teste
-Teste utiliza banco H2:
-spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=teste
 
 ---
 
